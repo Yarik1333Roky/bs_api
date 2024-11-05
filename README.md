@@ -23,16 +23,6 @@
     - Description,
     - Members.
 
-## Installation
-Install latest version with PyPI:
-```
-pip install bs_api
-```
-Or use from GitHub:
-```
-pip install https://github.com/Yarik1333Roky/bs_api.git
-```
-
 ## Examples
 
 Get player trophies:
