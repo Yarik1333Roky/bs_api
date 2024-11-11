@@ -3,11 +3,11 @@ from .errors import ResourceError
 
 class ClientBS(RequestsModel):
     """
-        Client to Brawl Stars API.
+    Client to Brawl Stars API.
 
-        Args:
-            APIToken (:obj:`str`): Your special token.
-        """
+    Args:
+        APIToken (:obj:`str`): Your special token.
+    """
 
     def __init__(self, APIToken: str) -> None:
         super().__init__(APIToken)
@@ -18,6 +18,7 @@ class ClientBS(RequestsModel):
 
         Args:
             tag (:obj:`str`): Target tag.
+            EXAMPLE: "#8VJVG4PVC", "#8vjvG4pcv"
 
         Return:
             `Player`: Player class with all parameters.
@@ -102,6 +103,7 @@ class ClientBS(RequestsModel):
 
         Args:
             countrycode (:obj:`Literal["global", "contryCode"]`): Country code or global search.
+            EXAMPLE: FR, RU, US, global
 
         Return:
             `List[RankedClub]`: List of classes RankedClub.
@@ -109,7 +111,7 @@ class ClientBS(RequestsModel):
         request = await self._create_request(f"rankings/{countrycode.upper()}/clubs")
         returnlist = []
         for info in request["items"]:
-            info["rank_from"] = countrycode.upper()
+            info["ranked_country_code"] = countrycode.upper()
             returnlist.append(RankedClub(info, self._token))
 
         return returnlist
@@ -124,12 +126,17 @@ class ClientBS(RequestsModel):
         Args:
             brawlerid (:obj:`int`): Unique id of brawler.
             countrycode (:obj:`Literal["global", "contryCode"]`): Country code or global search.
-
+            EXAMPLE: FR, RU, US, global
         Return:
             `List[RankedPlayer]`: List of classes RankedPlayer.
         """
         request = await self._create_request(f"rankings/{countrycode}/brawlers/{brawlerid}")
-        return [RankedPlayer(data, self._token) for data in request["items"]]
+        returnlist = []
+        for info in request["items"]:
+            info["ranked_country_code"] = countrycode.upper()
+            returnlist.append(RankedPlayer(info, self._token))
+
+        return returnlist
 
     async def get_brawlerid_by_name(self, name: str) -> int:
         """
@@ -170,9 +177,10 @@ class ClientBS(RequestsModel):
 
         Args:
             countrycode (:obj:`Literal["global", "contryCode"]`): Country code or global search.
+            EXAMPLE: FR, RU, US, global
 
         Return:
-            `List[RankedClub]`: List of classes RankedPlayer.
+            `List[RankedPlayer]`: List of classes RankedPlayer.
         """
         request = await self._create_request(f"rankings/{countrycode}/players")
         return [RankedPlayer(data, self._token) for data in request["items"]]
